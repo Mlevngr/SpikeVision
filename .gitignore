@@ -1,2 +1,4 @@
-resluts/
+Python/resluts/
 data/
+*.pyc
+*.pth
