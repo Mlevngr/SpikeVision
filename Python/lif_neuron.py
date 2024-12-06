@@ -28,34 +28,14 @@ class ActFun(torch.autograd.Function):
         lens = .1
         mul = 0.9
         gamma = 1
-        # temp = gaussian(input, mu=0., sigma=lens) * (1. + hight) \
-        #        - gaussian(input, mu=lens, sigma=scale * lens) * hight \
-        #        - gaussian(input, mu=-lens, sigma=scale * lens) * hight
+
         
         temp = torch.sigmoid(gamma * input) * (1 - torch.sigmoid(gamma * input))
-        # temp = (input>=-0.5)&(input<0.5)
-        # temp = torch.clamp(temp, min=0, max=1)
-        # return grad_input * temp.float() * mul
-        return grad_input * temp.float() * 5 #* gamma
+
+        return grad_input * temp.float() * 5 # stablize the training
 
 
 act_fun = ActFun.apply
-
-class lif_neuron(nn.Module):
-    def __init__():
-        pass
-    # if (len(x.shape) == 4):
-    #     B, C, H, W = x.shape
-    # elif (len(x.shape) == 5):
-    #     T, B, C, H, W = x.shape
-    def lif(inputs, mem, thr, decay, reset=True):
-        mem = decay * mem + inputs
-        inputs_ = mem - thr
-        spike = act_fun(inputs_)
-        mem = mem * (1 - spike)
-        negative_ = (mem < 0).float()
-        # mem = (mem * (1 - negative_)) - (0 * negative_)
-        return mem, spike
     
 class LIFNeuron(nn.Module):
     def __init__(self, threshold=1.0, decay=1, min=8/128, reset=True, name=None, train=True):
@@ -81,8 +61,6 @@ class LIFNeuron(nn.Module):
             spike = act_fun(0.4 * torch.tanh(self.mem - self.threshold))
         else:
             spike = act_fun(0.4 * torch.tanh(self.mem - threshold))
-        # spike = act_fun(inputs_)
-        # spike = inputs_.ge(0).float()
         
 
         if self.reset:
