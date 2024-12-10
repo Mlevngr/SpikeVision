@@ -32,7 +32,7 @@ class ActFun(torch.autograd.Function):
         
         temp = torch.sigmoid(gamma * input) * (1 - torch.sigmoid(gamma * input))
 
-        return grad_input * temp.float() * 5 # stablize the training
+        return grad_input * temp.float() * 3 # stablize the training
 
 
 act_fun = ActFun.apply
